@@ -1,0 +1,1 @@
+* Swagger: http://localhost:8061/api/coindesk/v1/swagger-ui/index.html
