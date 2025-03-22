@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import com.example.coindesk_api.repository.CurrencyMappingRepository;
 import com.example.coindesk_api.vo.CurrencyMapping;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -32,8 +33,8 @@ class CurrencyMappingServiceTest {
     @Test
     void testGetAllCurrencies() {
         when(repository.findAll()).thenReturn(Arrays.asList(
-            new CurrencyMapping(1L, "USD", "美元"),
-            new CurrencyMapping(2L, "EUR", "歐元")
+        		 new CurrencyMapping(1L, "USD", "美元" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984")),
+                 new CurrencyMapping(2L, "EUR", "歐元" , "&euro;" ,"52,243.287" ,"Euro", new BigDecimal("52243.2865"))
         ));
 
         assertEquals(2, service.getAllCurrencies().size());
@@ -41,7 +42,7 @@ class CurrencyMappingServiceTest {
 
     @Test
     void testGetCurrencyByCode() {
-        CurrencyMapping usd = new CurrencyMapping(1L, "USD", "美元");
+        CurrencyMapping usd =  new CurrencyMapping(1L, "USD", "美元" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984"));
         when(repository.findByCurrencyCode("USD")).thenReturn(Optional.of(usd));
 
         Optional<CurrencyMapping> result = service.getCurrencyByCode("USD");
@@ -51,21 +52,21 @@ class CurrencyMappingServiceTest {
 
     @Test
     void testAddCurrency() {
-        CurrencyMapping jpy = new CurrencyMapping(null, "JPY", "日圓");
+        CurrencyMapping jpy = new CurrencyMapping(null, "GBP", "英鎊" ,"&pound;" ,"43,984.02" ,"British Pound Sterling", new BigDecimal("43984.0203"));
         when(repository.save(any())).thenReturn(jpy);
 
         CurrencyMapping result = service.addCurrency(jpy);
         assertNotNull(result);
-        assertEquals("JPY", result.getCurrencyCode());
+        assertEquals("GBP", result.getCurrencyCode());
     }
 
     @Test
     void testUpdateCurrency() {
-        CurrencyMapping usd = new CurrencyMapping(1L, "USD", "美元");
+        CurrencyMapping usd =  new CurrencyMapping(1L, "USD", "美元" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984"));
         when(repository.findByCurrencyCode("USD")).thenReturn(Optional.of(usd));
         when(repository.save(any())).thenReturn(usd);
 
-        CurrencyMapping updated = new CurrencyMapping(null, "USD", "美金");
+        CurrencyMapping updated =  new CurrencyMapping(null, "USD", "美金" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984"));
         CurrencyMapping result = service.updateCurrency("USD", updated);
 
         assertEquals("美金", result.getCurrencyName());
@@ -73,7 +74,7 @@ class CurrencyMappingServiceTest {
 
     @Test
     void testDeleteCurrency() {
-        CurrencyMapping usd = new CurrencyMapping(1L, "USD", "美元");
+        CurrencyMapping usd =  new CurrencyMapping(1L, "USD", "美元" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984"));
         when(repository.findByCurrencyCode("USD")).thenReturn(Optional.of(usd));
 
         service.deleteCurrency("USD");
