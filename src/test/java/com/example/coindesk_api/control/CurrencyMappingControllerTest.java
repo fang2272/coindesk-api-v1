@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Arrays; 
 
 import static org.mockito.Mockito.*;
@@ -43,8 +44,8 @@ class CurrencyMappingControllerTest {
     @Test
     void testGetAllCurrencies() throws Exception {
         when(service.getAllCurrencies()).thenReturn(Arrays.asList(
-            new CurrencyMapping(1L, "USD", "美元"),
-            new CurrencyMapping(2L, "EUR", "歐元")
+            new CurrencyMapping(1L, "USD", "美元" , "&#36;"  ,"57,756.298" ,"United States Dollar", new BigDecimal("57756.2984")),
+            new CurrencyMapping(2L, "EUR", "歐元" , "&euro;" ,"52,243.287" ,"Euro", new BigDecimal("52243.2865"))
         ));
 
         mockMvc.perform(get("/currencies"))
@@ -54,13 +55,13 @@ class CurrencyMappingControllerTest {
 
     @Test
     void testAddCurrency() throws Exception {
-        CurrencyMapping currency = new CurrencyMapping(null, "JPY", "日圓");
+        CurrencyMapping currency = new CurrencyMapping(null, "GBP", "英鎊" ,"&pound;" ,"43,984.02" ,"British Pound Sterling", new BigDecimal("43984.0203"));
         when(service.addCurrency(any())).thenReturn(currency);
 
         mockMvc.perform(post("/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(currency)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.currencyCode").value("JPY"));
+            .andExpect(jsonPath("$.currencyCode").value("GBP"));
     }
 }
