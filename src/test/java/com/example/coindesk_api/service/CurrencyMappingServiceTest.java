@@ -6,15 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.BeanUtils;
 
 import com.example.coindesk_api.repository.CurrencyMappingRepository;
 import com.example.coindesk_api.vo.CurrencyMapping;
+import com.example.coindesk_api.vo.site24x7.CurrencyMappingDTO;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CurrencyMappingServiceTest {
@@ -39,6 +44,23 @@ class CurrencyMappingServiceTest {
 
         assertEquals(2, service.getAllCurrencies().size());
     }
+    @Test
+    void testGetAllCurrenciesV2() {
+        List<CurrencyMapping> mockData = new ArrayList<>();
+        CurrencyMapping currency = new CurrencyMapping();
+        currency.setCurrencyCode("USD");
+        currency.setCurrencyName("US Dollar");
+        mockData.add(currency);
+
+        when(repository.findAll()).thenReturn(mockData);
+
+        List<CurrencyMappingDTO> result = service.getAllCurrenciesV2();
+
+        assertEquals(1, result.size());
+        assertEquals("USD", result.get(0).getCurrencyCode());
+        verify(repository, times(1)).findAll();
+    }
+
 
     @Test
     void testGetCurrencyByCode() {
@@ -58,6 +80,24 @@ class CurrencyMappingServiceTest {
         CurrencyMapping result = service.addCurrency(jpy);
         assertNotNull(result);
         assertEquals("GBP", result.getCurrencyCode());
+    }
+    @Test
+    void testAddCurrencyV2() {
+        CurrencyMappingDTO dto = new CurrencyMappingDTO();
+        dto.setCurrencyCode("USD");
+        dto.setCurrencyName("US Dollar");
+
+        CurrencyMapping mockCurrency = new CurrencyMapping();
+        BeanUtils.copyProperties(dto, mockCurrency);
+        mockCurrency.setId(1L);
+
+        when(repository.save(any(CurrencyMapping.class))).thenReturn(mockCurrency);
+
+        CurrencyMappingDTO result = service.addCurrencyV2(dto);
+
+        assertNotNull(result.getId());
+        assertEquals("USD", result.getCurrencyCode());
+        verify(repository, times(1)).save(any(CurrencyMapping.class));
     }
 
     @Test
