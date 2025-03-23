@@ -8,10 +8,12 @@ on:
     branches:
       - feature/03-new_api
       - feature/03-add_swagger_info
+      - feature/05-adjust_db_version_control      
   pull_request:
     branches:
       - feature/03-new_api
       - feature/03-add_swagger_info
+      - feature/05-adjust_db_version_control
 
 jobs:
   build:
