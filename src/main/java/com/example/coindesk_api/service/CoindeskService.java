@@ -79,13 +79,14 @@ public class CoindeskService {
      * 
      * **/
     void addDesc(final Map<String,CurrencyMappingDTO>bpi){
-    	bpi.entrySet().forEach(unit ->{ 
-    		 Optional<CurrencyMapping> option = repository.findByCurrencyCode(unit.getKey()) ;
-    		if( option.get()!=null) {
-    			unit.getValue().setCurrencyName(option.get().getCurrencyName());
-    		}
-    		
-    	});
+		bpi.entrySet().forEach(unit -> {
+			Optional<CurrencyMapping> option = repository.findByCurrencyCode(unit.getKey());
+
+			if (option.isPresent() && option.get() != null) {
+				unit.getValue().setCurrencyName(option.get().getCurrencyName());
+			}
+
+		});
     }
     
 }
