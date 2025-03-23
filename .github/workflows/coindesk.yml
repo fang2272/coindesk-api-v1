@@ -14,6 +14,7 @@ on:
       - feature/03-new_api
       - feature/03-add_swagger_info
       - feature/05-adjust_db_version_control
+      - feature/07-complete_all_unit_tests
 
 jobs:
   build:
