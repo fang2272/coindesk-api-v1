@@ -1,4 +1,4 @@
-name: package test ci
+name: deploy test ci
 
 on:
   workflow_dispatch:
@@ -6,10 +6,12 @@ on:
     paths:
       - '**'
     branches:
+      - main
       - feature/03-new_api
       - feature/03-add_swagger_info
   pull_request:
     branches:
+      - main
       - feature/03-new_api
       - feature/03-add_swagger_info
 
@@ -24,9 +26,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Package Test
+      - name: Deploy to Github Package Registry
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sed -i 's|</project>|<distributionManagement><repository><id>github</id><name>GitHub</name><url>https://maven.pkg.github.com/fang2272/coindesk-api-v1</url></repository></distributionManagement></project>|g' pom.xml ;
-          mvn  package
+          mvn  deploy

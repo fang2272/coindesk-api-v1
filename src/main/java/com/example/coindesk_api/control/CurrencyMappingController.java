@@ -59,7 +59,16 @@ public class CurrencyMappingController {
     public CurrencyMappingDTO addCurrency(@RequestBody CurrencyMappingDTO currency) {
         return service.addCurrencyV2(currency);
     }
-    @Operation(summary = "實作內容-1: 幣別資料表維護功能API", description = "幣別資料表Update維護功能的 API")
+    @Operation(summary = "實作內容-1: 幣別資料表維護功能API",
+    		description = "幣別資料表Update維護功能的 API",
+    		responses = @ApiResponse(
+                    responseCode = "200",
+                    description = "Ok",
+                 		   content = 
+                        { @Content(mediaType = "application/json", schema = 
+                          @Schema(implementation = CurrencyMappingDTO.class)) }
+                    )
+        )
     @PutMapping("/{code}")
     public ResponseEntity<CurrencyMapping> updateCurrency(@PathVariable String code, @RequestBody CurrencyMapping currency) {
         return ResponseEntity.ok(service.updateCurrency(code, currency));
