@@ -6,7 +6,8 @@ import com.example.coindesk_api.service.CurrencyMappingService;
 import com.example.coindesk_api.vo.CurrencyMapping;
 import com.example.coindesk_api.vo.site24x7.CurrencyMappingDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
- 
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension; 
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
@@ -23,7 +25,7 @@ import java.util.Arrays;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
- 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class CurrencyMappingControllerTest {
  
@@ -53,9 +55,14 @@ class CurrencyMappingControllerTest {
                 new CurrencyMappingDTO(2L, "EUR", "歐元" , "&euro;" ,"52,243.287" ,"Euro", new BigDecimal("52243.2865"))
             ));
 
-        mockMvc.perform(get("/currencies"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()").value(2));
+        ResultActions data = mockMvc.perform(get("/currencies")
+        		.contentType(MediaType.APPLICATION_JSON))  ;
+        String content =  data.andReturn().getResponse().getContentAsString();
+        	        log.info("------Response-------");
+        	        log.info(content);
+        	        log.info("-------------------");
+        data.andExpect(status().isOk())
+          .andExpect(jsonPath("$.size()").value(2));
     }
 
     @Test
@@ -63,19 +70,23 @@ class CurrencyMappingControllerTest {
 //        CurrencyMapping currency = new CurrencyMapping(null, "GBP", "英鎊" ,"&pound;" ,"43,984.02" ,"British Pound Sterling", new BigDecimal("43984.0203"));
         CurrencyMappingDTO currency = new CurrencyMappingDTO(null, "GBP", "英鎊" ,"&pound;" ,"43,984.02" ,"British Pound Sterling", new BigDecimal("43984.0203"));
         
-        when(service.addCurrencyV2(any())).thenReturn(currency);
+        when(service.addCurrencyV2(any())).thenReturn(currency); 
 
 //        mockMvc.perform(post("/currencies")
 //                .contentType(MediaType.APPLICATION_JSON)
 //                .content(objectMapper.writeValueAsString(currency)))
 //            .andExpect(status().isOk())
 //            .andExpect(jsonPath("$.currencyCode").value("GBP"));
-        
-        mockMvc.perform(post("/currencies")
+          
+        ResultActions data = mockMvc.perform(post("/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(currency)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.code").value("GBP"));
+                .content(objectMapper.writeValueAsString(currency)))  ;
+        String content =  data.andReturn().getResponse().getContentAsString();
+        	        log.info("------Response-------");
+        	        log.info(content);
+        	        log.info("-------------------");
+        data .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value("GBP"));
         
     }
     @Test
@@ -84,13 +95,17 @@ class CurrencyMappingControllerTest {
         CurrencyMapping currency = new CurrencyMapping(1L, "USD", "美元", "&#36;", "57,756.298", "United States Dollar", new BigDecimal("57756.2984"));
 
         when(service.updateCurrency(eq(code), any(CurrencyMapping.class))).thenReturn(currency);
-
-        mockMvc.perform(put("/currencies/{code}", code)
+        
+        ResultActions data =  mockMvc.perform(put("/currencies/{code}", code)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(currency)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.currencyCode").value("USD"))
-            .andExpect(jsonPath("$.currencyName").value("美元"));
+                .content(objectMapper.writeValueAsString(currency)))  ;
+        String content =  data.andReturn().getResponse().getContentAsString();
+        	        log.info("------Response-------");
+        	        log.info(content);
+        	        log.info("-------------------");
+        data.andExpect(status().isOk())
+        .andExpect(jsonPath("$.currencyCode").value("USD"))
+        .andExpect(jsonPath("$.currencyName").value("美元"));
     }
 
     @Test
@@ -99,8 +114,13 @@ class CurrencyMappingControllerTest {
 
         doNothing().when(service).deleteCurrency(code);
 
-        mockMvc.perform(delete("/currencies/{code}", code))
+        ResultActions data =  mockMvc.perform(delete("/currencies/{code}", code))
             .andExpect(status().isOk())
             .andExpect(content().string("Deleted successfully"));
+                
+        String content =  data.andReturn().getResponse().getContentAsString();
+        	        log.info("------Response-------");
+        	        log.info(content);
+        	        log.info("-------------------"); 
     }
 }
