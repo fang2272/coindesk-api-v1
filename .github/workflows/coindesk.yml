@@ -1,0 +1,32 @@
+name: package test ci
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**'
+    branches:
+      - feature/03-new_api
+      - feature/03-add_swagger_info
+  pull_request:
+    branches:
+      - feature/03-new_api
+      - feature/03-add_swagger_info
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Package Test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sed -i 's|</project>|<distributionManagement><repository><id>github</id><name>GitHub</name><url>https://maven.pkg.github.com/fang2272/coindesk-api-v1</url></repository></distributionManagement></project>|g' pom.xml ;
+          mvn  package
